@@ -180,14 +180,15 @@ void UpdateClass::abort(){
 bool UpdateClass::_writeBuffer(){
     //first bytes of new firmware
     if(!_progress && _command == U_FLASH){
-        //check magic
-        if(_buffer[0] != ESP_IMAGE_HEADER_MAGIC){
-            _abort(UPDATE_ERROR_MAGIC_BYTE);
-            return false;
-        }
-        //remove magic byte from the firmware now and write it upon success
-        //this ensures that partially written firmware will not be bootable
-        _buffer[0] = 0xFF;
+        // ! Don't check magic
+        // //check magic
+        // if(_buffer[0] != ESP_IMAGE_HEADER_MAGIC){
+        //     _abort(UPDATE_ERROR_MAGIC_BYTE);
+        //     return false;
+        // }
+        // //remove magic byte from the firmware now and write it upon success
+        // //this ensures that partially written firmware will not be bootable
+        // _buffer[0] = 0xFF;
     }
     if (!_progress && _progress_callback) {
         _progress_callback(0, _size);
@@ -228,10 +229,11 @@ bool UpdateClass::_verifyHeader(uint8_t data) {
 
 bool UpdateClass::_verifyEnd() {
     if(_command == U_FLASH) {
-        if(!_enablePartition(_partition) || !_partitionIsBootable(_partition)) {
-            _abort(UPDATE_ERROR_READ);
-            return false;
-        }
+        // ! Don't check magic
+        // if(!_enablePartition(_partition) || !_partitionIsBootable(_partition)) {
+        //     _abort(UPDATE_ERROR_READ);
+        //     return false;
+        // }
 
         if(esp_ota_set_boot_partition(_partition)){
             _abort(UPDATE_ERROR_ACTIVATE);
